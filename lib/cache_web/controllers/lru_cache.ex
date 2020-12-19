@@ -36,7 +36,7 @@ defmodule LruCache do
   def handle_call({:get, key}, _from, state) do
     case :ets.match(state.table_name, {key, :"$1"}) do
       [] ->
-        {:reply, {:not_found, nil}, state}
+        {:reply, {:not_found, :not_found}, state}
       [[value]] ->
         new_history = update_history(key, state.history)
         {:reply, {:ok, value}, %{state | :history => new_history}}
@@ -70,8 +70,7 @@ defmodule LruCache do
 
   @impl true
   def handle_cast(:flush, state) do
-    :ets.delete(state.table_name)
-    :ets.new(state.table_name, [:set, :public, :named_table])
+    :ets.delete_all_objects(state.table_name)
     {:noreply, %{state | :history => [], :size => 0}}
   end
 
