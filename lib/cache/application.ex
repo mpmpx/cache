@@ -12,9 +12,11 @@ defmodule Cache.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Cache.PubSub},
       # Start the Endpoint (http/https)
-      CacheWeb.Endpoint
+      CacheWeb.Endpoint,
       # Start a worker by calling: Cache.Worker.start_link(arg)
       # {Cache.Worker, arg}
+      {LruCache, {Application.fetch_env!(:cache, :cache_name),
+                  Application.fetch_env!(:cache, :max_size)}}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
