@@ -49,6 +49,7 @@ being evicted.
     **Content:** `{error: "data parameters key and value are invalid"}`
 
 [Return top](#APIs)
+
 ---
 ## Get value
 Gets the value of the key that exists in the cache.
@@ -86,6 +87,7 @@ Gets the value of the key that exists in the cache.
     **Content:** `{value: "not_found"}`
 
 [Return top](#APIs)
+
 ---
 ## Show history
 Gets a list of keys stored in the cache. The leftmost key in the list represents
@@ -118,6 +120,7 @@ the least recently used one and the rightmost key is the most recently used.
     **Content:** `{error: "failed to get history of keys in the cache"}`
 
 [Return top](#APIs)
+
 ---
 ## Flush cache
 Removes all records in the cache.
