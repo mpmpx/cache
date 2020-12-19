@@ -19,4 +19,9 @@ defmodule CacheWeb.CacheController do
     res = LruCache.put(key, value)
     json conn, %{:message => res}
   end
+
+  def flush(conn, _) do
+    res = LruCache.flush()
+    json conn, %{:message => res}
+  end
 end

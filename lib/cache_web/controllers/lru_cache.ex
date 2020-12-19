@@ -18,7 +18,11 @@ defmodule LruCache do
   end
 
   def get_history() do
-    GenServer.call(Cache, :get_all)
+    GenServer.call(Cache, :get_history)
+  end
+
+  def flush() do
+    GenServer.cast(Cache, :flush)
   end
   # Server (callbacks)
 
@@ -52,16 +56,23 @@ defmodule LruCache do
         :ets.insert(state.table_name, {key, value})
         {:noreply, %{state | :history => new_history}}
       [] ->
-        new_history = rest_history ++ [key]
+        new_history = state.history ++ [key]
         :ets.insert(state.table_name, {key, value})
-        if state.size <= state.max_size do
+        if state.size < state.max_size do
           {:noreply, %{state | :history => new_history, :size => state.size + 1}}
         else
-          [evict_key | rest_history] = state.history
+          [evict_key | rest_history] = new_history
           :ets.delete(state.table_name, evict_key)
           {:noreply, %{state | :history => rest_history}}
         end
     end
+  end
+
+  @impl true
+  def handle_cast(:flush, state) do
+    :ets.delete(state.table_name)
+    :ets.new(state.table_name, [:set, :public, :named_table])
+    {:noreply, %{state | :history => [], :size => 0}}
   end
 
   defp update_history(key, [head | tail], prev \\ []) do
